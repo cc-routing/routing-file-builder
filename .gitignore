@@ -1,0 +1,15 @@
+# autogen.sh-generated files
+target
+nbproject
+nbactions.xml
+*.log
+nb-configuration.xml
+.idea
+*.csv
+/*.png
+/*.jpg
+/*.txt
+/*.csv
+/*.xlsx
+
+*.iml
