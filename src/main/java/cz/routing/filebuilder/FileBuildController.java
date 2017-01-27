@@ -7,11 +7,13 @@ import cz.routing.filebuilder.filewrite.OverlayGraphSaver;
 import cz.routing.filebuilder.graphload.SaraGraphLoader;
 import cz.routing.filebuilder.preprocessing.Preprocessor;
 
+import java.io.IOException;
+
 /**
  * @author Michael Blaha {@literal <blahami2@gmail.com>}
  */
 public class FileBuildController {
-    public void run( SaraGraphLoader loader, Preprocessor preprocessor, OverlayGraphSaver saver ) {
+    public void run( SaraGraphLoader loader, Preprocessor preprocessor, OverlayGraphSaver saver ) throws IOException {
         SaraGraph graph = loader.loadSara();
         OverlayGraph overlayGraph = preprocessor.buildOverlay(graph);
         saver.saveOverlay(overlayGraph);
