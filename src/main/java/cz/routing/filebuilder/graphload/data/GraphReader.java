@@ -17,17 +17,22 @@ import java.util.Properties;
 public class GraphReader {
 
     public boolean isPreprocessed( Properties properties ) throws IOException {
-        // TODO
-        throw new UnsupportedOperationException( "Not implemented yet." );
+        try {
+            SimpleDatabase database = SimpleDatabase.newSqliteDatabase( properties );
+            ResultSet resultSet = database.read( "SELECT name FROM sqlite_master WHERE type='table' AND name='cells';" );
+            return resultSet.next();
+        } catch ( SQLException e ) {
+            throw new IOException( e );
+        }
     }
 
     public SaraGraph readSaraGraph( Properties properties ) throws IOException {
-        // TODO
-        throw new UnsupportedOperationException( "Not implemented yet." );
+        GraphDAO graphDAO = new SqliteGraphDAO( properties );
+        return graphDAO.loadSaraGraph();
     }
 
     public Graph readGraph( Properties properties ) throws IOException {
-        // TODO
-        throw new UnsupportedOperationException( "Not implemented yet." );
+        GraphDAO graphDAO = new SqliteGraphDAO( properties );
+        return graphDAO.loadGraph();
     }
 }
