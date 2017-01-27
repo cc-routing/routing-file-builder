@@ -29,19 +29,12 @@ public class GraphReaderTest {
     public void setUp() throws Exception {
         graphReader = new GraphReader();
         String resFolderPath = DataTestUtils.getResourceFolderAbsolutePath();
-        properties = getSpatialiteProperties( resFolderPath, "routing_brand.sqlite" );
-        saraProperties = getSpatialiteProperties( resFolderPath, "routing_sara_brand.sqlite" );
+        properties = DataTestUtils.getSpatialiteProperties( resFolderPath, "routing_brand.sqlite" );
+        saraProperties = DataTestUtils.getSpatialiteProperties( resFolderPath, "routing_sara_brand.sqlite" );
         data = new Properties();
         data.load( new FileInputStream( new File( resFolderPath + "\\sqlite\\brand_data.properties" ) ) );
     }
 
-    private Properties getSpatialiteProperties( String resFolderPath, String fileName ) {
-        Properties properties = new Properties();
-        properties.setProperty( "driver", "org.sqlite.JDBC" );
-        properties.setProperty( "url", "jdbc:sqlite:" + resFolderPath + "\\sqlite\\" + fileName );
-        properties.setProperty( "spatialite_path", "mod_spatialite.dll" );
-        return properties;
-    }
 
     @Test
     public void readGraphReturnsSimpleGraph() throws Exception {
