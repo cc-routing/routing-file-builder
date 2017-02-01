@@ -5,6 +5,8 @@ import cz.certicon.routing.algorithm.sara.preprocessing.PreprocessingInput;
 import cz.certicon.routing.model.basic.IdSupplier;
 
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Michael Blaha {@literal <blahami2@gmail.com>}
@@ -18,10 +20,11 @@ public class ConfigDataProvider {
     }
 
     public Properties getDatabaseProperties() {
+
         Properties properties = new Properties();
-        properties.setProperty( "driver", getParameter( "routing.db.driver" ) );
-        properties.setProperty( "url", getParameter( "routing.db.url" ) );
-        properties.setProperty( "spatialite_path", getParameter( "routing.db.spatialite_path" ) );
+        properties.setProperty( "driver", getParameter( "routing.db.driver", String.class ) );
+        properties.setProperty( "url", getParameter( "routing.db.url", String.class ) );
+        properties.setProperty( "spatialite_path", getParameter( "routing.db.spatialite_path", String.class ) );
         return properties;
     }
 
@@ -43,12 +46,9 @@ public class ConfigDataProvider {
         );
     }
 
-
-    private String getParameter( String key ) {
-        return configuration.getValue( key ).orElseThrow( () -> new IllegalStateException( "Unknown parameter: " + key ) );
-    }
-
     private <T> T getParameter( String key, Class<T> clazz ) {
-        return configuration.getValue( key, clazz ).orElseThrow( () -> new IllegalStateException( "Unknown parameter: " + key ) );
+        T value = configuration.getValue( key, clazz ).orElseThrow( () -> new IllegalStateException( "Configuration input fail: Unknown parameter: " + key ) );
+        Logger.getLogger( getClass().getName() ).log( Level.INFO, "Loaded param for key: " + key + ", of type: " + clazz.getSimpleName() + ", of value: " + value );
+        return value;
     }
 }
