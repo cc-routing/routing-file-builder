@@ -1,6 +1,5 @@
 package cz.routing.filebuilder;
 
-import com.google.common.eventbus.EventBus;
 import cz.certicon.routing.algorithm.sara.preprocessing.overlay.OverlayBuilder;
 import cz.certicon.routing.model.graph.SaraGraph;
 import cz.routing.filebuilder.filewrite.OverlayGraphSaver;
@@ -19,7 +18,7 @@ public class FileBuildControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        controller = new FileBuildController(new EventBus());
+        controller = new FileBuildController();
     }
 
     @Test

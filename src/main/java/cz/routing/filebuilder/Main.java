@@ -1,6 +1,5 @@
 package cz.routing.filebuilder;
 
-import com.google.common.eventbus.EventBus;
 import cz.blahami2.utils.configuration.ConfigurationBuilder;
 import cz.routing.filebuilder.config.ConfigDataProvider;
 import cz.routing.filebuilder.filewrite.OverlayGraphSaver;
@@ -32,7 +31,7 @@ public class Main {
         SaraGraphLoader saraGraphLoader = configuration.buildSaraGraphLoader( configDataProvider );
         OverlayPreprocessor overlayPreprocessor = configuration.buildOverlayPreprocessor();
         OverlayGraphSaver overlayGraphSaver = configuration.buildOverlayGraphSaver();
-        FileBuildController fileBuildController = new FileBuildController( new EventBus() );
+        FileBuildController fileBuildController = new FileBuildController();
         fileBuildController.run( saraGraphLoader, overlayPreprocessor, overlayGraphSaver );
     }
 
