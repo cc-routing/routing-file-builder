@@ -12,9 +12,10 @@ import java.io.IOException;
  * @author Michael Blaha {@literal <blahami2@gmail.com>}
  */
 public class FileBuildController {
+
     public void run( SaraGraphLoader loader, OverlayPreprocessor overlayPreprocessor, OverlayGraphSaver saver ) throws IOException {
         SaraGraph graph = loader.loadSara();
-        OverlayBuilder overlayGraph = overlayPreprocessor.buildOverlay(graph);
-        saver.saveOverlay(overlayGraph);
+        OverlayBuilder overlayBuilder = overlayPreprocessor.buildOverlay( graph );
+        saver.saveOverlay( overlayBuilder );
     }
 }

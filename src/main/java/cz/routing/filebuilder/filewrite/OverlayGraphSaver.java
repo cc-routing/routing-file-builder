@@ -7,7 +7,8 @@ import cz.certicon.routing.algorithm.sara.preprocessing.overlay.OverlayBuilder;
  */
 public class OverlayGraphSaver {
     public void saveOverlay( OverlayBuilder overlayGraph ) {
+        System.out.println("Saving overlay graph...");
         // TODO
-        throw new UnsupportedOperationException( "Not implemented yet." );
+//        throw new UnsupportedOperationException( "Not implemented yet." );
     }
 }
