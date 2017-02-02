@@ -3,6 +3,7 @@ package cz.routing.filebuilder.graphload.data;
 import cz.certicon.routing.model.graph.Graph;
 import cz.certicon.routing.model.graph.SaraGraph;
 import cz.routing.filebuilder.data.DataTestUtils;
+import cz.routing.filebuilder.model.NodeData;
 import cz.routing.filebuilder.model.TurnTableData;
 import org.junit.Before;
 import org.junit.Test;
@@ -80,6 +81,22 @@ public class GraphReaderTest {
             put( 4, new TurnTableData( 4, new double[][]{ { Double.MAX_VALUE, 0 }, { 0, Double.MAX_VALUE } } ) );
             put( 5, new TurnTableData( 5, new double[][]{ { Double.MAX_VALUE, 0 }, { Double.MAX_VALUE, Double.MAX_VALUE } } ) );
             put( 6, new TurnTableData( 6, new double[][]{ { Double.MAX_VALUE, Double.MAX_VALUE }, { 0, Double.MAX_VALUE } } ) );
+        }};
+        assertThat( result, equalTo( expected ) );
+    }
+
+    @Test
+    public void readNodeDataReturnsCorrectResults() throws Exception {
+        GraphReader graphReader = new GraphReader( saraProperties );
+        Map<Integer, NodeData> result = graphReader.readNodes( 1l );
+        Map<Integer, NodeData> expected = new HashMap<Integer, NodeData>() {{
+            put( 6, new NodeData( 6, 1 ) );
+            put( 37, new NodeData( 37, 1 ) );
+            put( 54, new NodeData( 54, 2 ) );
+            put( 72, new NodeData( 72, 1 ) );
+            put( 73, new NodeData( 73, 4 ) );
+            put( 108, new NodeData( 108, 4 ) );
+            put( 111, new NodeData( 111, 2 ) );
         }};
         assertThat( result, equalTo( expected ) );
     }

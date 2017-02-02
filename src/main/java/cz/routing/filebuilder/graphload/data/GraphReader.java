@@ -5,11 +5,16 @@ import cz.certicon.routing.data.SqliteGraphDAO;
 import cz.certicon.routing.data.basic.database.SimpleDatabase;
 import cz.certicon.routing.model.graph.Graph;
 import cz.certicon.routing.model.graph.SaraGraph;
+import cz.routing.filebuilder.model.NodeData;
 import cz.routing.filebuilder.model.TurnTableData;
 
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.math.BigDecimal;
+import java.net.URL;
+import java.sql.*;
+import java.sql.Date;
 import java.util.*;
 
 /**
@@ -70,5 +75,20 @@ public class GraphReader {
     public Graph readGraph() throws IOException {
         GraphDAO graphDAO = new SqliteGraphDAO( connectionProperties );
         return graphDAO.loadGraph();
+    }
+
+    public Map<Integer, NodeData> readNodes( long cellId ) throws IOException {
+        try {
+            Map<Integer, NodeData> nodeDataMap = new HashMap<>();
+            ResultSet rs = database.read( "SELECT * FROM nodes WHERE cell_id = " + cellId );
+            while ( rs.next() ) {
+                int id = rs.getInt( "id" );
+                int turnTableId = rs.getInt( "turn_table_id" );
+                nodeDataMap.put( id, new NodeData( id, turnTableId ) );
+            }
+            return nodeDataMap;
+        } catch ( SQLException e ) {
+            throw new IOException( e );
+        }
     }
 }
