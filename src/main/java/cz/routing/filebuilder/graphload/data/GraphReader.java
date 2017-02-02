@@ -16,9 +16,18 @@ import java.util.Properties;
  */
 public class GraphReader {
 
-    public boolean isPreprocessed( Properties properties ) throws IOException {
+    private final Properties connectionProperties;
+
+    public GraphReader( Properties connectionProperties ) {
+        assert connectionProperties.containsKey( "driver" );
+        assert connectionProperties.containsKey( "url" );
+        assert connectionProperties.containsKey( "spatialite_path" );
+        this.connectionProperties = connectionProperties;
+    }
+
+    public boolean isPreprocessed() throws IOException {
         try {
-            SimpleDatabase database = SimpleDatabase.newSqliteDatabase( properties );
+            SimpleDatabase database = SimpleDatabase.newSqliteDatabase( connectionProperties );
             ResultSet resultSet = database.read( "SELECT name FROM sqlite_master WHERE type='table' AND name='cells';" );
             return resultSet.next();
         } catch ( SQLException e ) {
@@ -26,13 +35,13 @@ public class GraphReader {
         }
     }
 
-    public SaraGraph readSaraGraph( Properties properties ) throws IOException {
-        GraphDAO graphDAO = new SqliteGraphDAO( properties );
+    public SaraGraph readSaraGraph() throws IOException {
+        GraphDAO graphDAO = new SqliteGraphDAO( connectionProperties );
         return graphDAO.loadSaraGraph();
     }
 
-    public Graph readGraph( Properties properties ) throws IOException {
-        GraphDAO graphDAO = new SqliteGraphDAO( properties );
+    public Graph readGraph() throws IOException {
+        GraphDAO graphDAO = new SqliteGraphDAO( connectionProperties );
         return graphDAO.loadGraph();
     }
 }

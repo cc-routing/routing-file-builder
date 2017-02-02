@@ -4,6 +4,7 @@ import cz.blahami2.utils.configuration.ConfigurationBuilder;
 import cz.routing.filebuilder.config.ConfigDataProvider;
 import cz.routing.filebuilder.filewrite.OverlayGraphSaver;
 import cz.routing.filebuilder.graphload.SaraGraphLoader;
+import cz.routing.filebuilder.graphload.data.GraphReader;
 import cz.routing.filebuilder.preprocessing.OverlayPreprocessor;
 import cz.routing.filebuilder.utils.Environment;
 
@@ -28,11 +29,12 @@ public class Main {
     public void run( String[] args ) throws IOException {
         this.configuration = new BasicConfiguration();
         this.configDataProvider = new ConfigDataProvider( prepareConfigurationBuilder( args ).build() );
-        SaraGraphLoader saraGraphLoader = configuration.buildSaraGraphLoader( configDataProvider );
+        GraphReader graphReader = configuration.buildGraphReader( configDataProvider );
+        SaraGraphLoader saraGraphLoader = configuration.buildSaraGraphLoader( configDataProvider, graphReader );
         OverlayPreprocessor overlayPreprocessor = configuration.buildOverlayPreprocessor();
         OverlayGraphSaver overlayGraphSaver = configuration.buildOverlayGraphSaver();
         FileBuildController fileBuildController = new FileBuildController();
-        fileBuildController.run( saraGraphLoader, overlayPreprocessor, overlayGraphSaver );
+        fileBuildController.run( graphReader, saraGraphLoader, overlayPreprocessor, overlayGraphSaver );
     }
 
     private ConfigurationBuilder prepareConfigurationBuilder( String[] args ) {

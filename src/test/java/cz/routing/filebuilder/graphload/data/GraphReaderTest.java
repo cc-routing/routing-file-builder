@@ -20,14 +20,12 @@ import static org.junit.Assert.*;
  */
 public class GraphReaderTest {
 
-    private GraphReader graphReader;
     private Properties properties;
     private Properties saraProperties;
     private Properties data;
 
     @Before
     public void setUp() throws Exception {
-        graphReader = new GraphReader();
         String resFolderPath = DataTestUtils.getResourceFolderAbsolutePath();
         properties = DataTestUtils.getSpatialiteProperties( resFolderPath, "routing_brand.sqlite" );
         saraProperties = DataTestUtils.getSpatialiteProperties( resFolderPath, "routing_sara_brand.sqlite" );
@@ -38,27 +36,31 @@ public class GraphReaderTest {
 
     @Test
     public void readGraphReturnsSimpleGraph() throws Exception {
-        Graph graph = graphReader.readGraph( properties );
+        GraphReader graphReader = new GraphReader( properties );
+        Graph graph = graphReader.readGraph();
         assertThat( graph.getNodesCount(), equalTo( Integer.parseInt( data.getProperty( "nodes_count" ) ) ) );
         assertThat( graph.getEdgeCount(), equalTo( Integer.parseInt( data.getProperty( "edges_count" ) ) ) );
     }
 
     @Test
     public void readSaraGraphReturnsSaraGraph() throws Exception {
-        SaraGraph graph = graphReader.readSaraGraph( saraProperties );
+        GraphReader graphReader = new GraphReader( saraProperties );
+        SaraGraph graph = graphReader.readSaraGraph();
         assertThat( graph.getNodesCount(), equalTo( Integer.parseInt( data.getProperty( "nodes_count" ) ) ) );
         assertThat( graph.getEdgeCount(), equalTo( Integer.parseInt( data.getProperty( "edges_count" ) ) ) );
     }
 
     @Test
     public void isPreprocessedReturnsFalseForPlainGraph() throws Exception {
-        boolean isPreprocessed = graphReader.isPreprocessed( properties );
+        GraphReader graphReader = new GraphReader( properties );
+        boolean isPreprocessed = graphReader.isPreprocessed();
         assertThat( isPreprocessed, equalTo( false ) );
     }
 
     @Test
     public void isPreprocessedReturnsTrueForSaraGraph() throws Exception {
-        boolean isPreprocessed = graphReader.isPreprocessed( saraProperties );
+        GraphReader graphReader = new GraphReader( saraProperties );
+        boolean isPreprocessed = graphReader.isPreprocessed();
         assertThat( isPreprocessed, equalTo( true ) );
     }
 }

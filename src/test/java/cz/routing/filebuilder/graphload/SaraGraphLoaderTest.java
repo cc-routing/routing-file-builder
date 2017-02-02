@@ -29,14 +29,14 @@ public class SaraGraphLoaderTest {
         properties.setProperty( "spatialite_path", "" );
         graphReader = mock( GraphReader.class );
         saraPreprocessor = mock( SaraPreprocessor.class );
-        loader = new SaraGraphLoader( properties, graphReader, saraPreprocessor );
+        loader = new SaraGraphLoader( graphReader, saraPreprocessor );
     }
 
     @Test
     public void loadSaraReturnsSaraForPlainGraph() throws Exception {
-        when( graphReader.isPreprocessed( properties ) ).thenReturn( false );
+        when( graphReader.isPreprocessed() ).thenReturn( false );
         Graph graph = mock( Graph.class );
-        when( graphReader.readGraph( properties ) ).thenReturn( graph );
+        when( graphReader.readGraph() ).thenReturn( graph );
         SaraGraph expected = mock( SaraGraph.class );
         when( saraPreprocessor.preprocess( graph ) ).thenReturn( expected );
         SaraGraph saraGraph = loader.loadSara();
@@ -45,9 +45,9 @@ public class SaraGraphLoaderTest {
 
     @Test
     public void laodSaraReturnsSaraForSara() throws Exception {
-        when( graphReader.isPreprocessed( properties ) ).thenReturn( true );
+        when( graphReader.isPreprocessed() ).thenReturn( true );
         SaraGraph expected = mock( SaraGraph.class );
-        when( graphReader.readSaraGraph( properties ) ).thenReturn( expected );
+        when( graphReader.readSaraGraph() ).thenReturn( expected );
         SaraGraph saraGraph = loader.loadSara();
         assertThat( saraGraph, equalTo( expected ) );
 

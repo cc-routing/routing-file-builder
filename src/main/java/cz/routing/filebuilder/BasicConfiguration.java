@@ -37,11 +37,15 @@ public class BasicConfiguration implements Configuration {
     }
 
     @Override
-    public SaraGraphLoader buildSaraGraphLoader( ConfigDataProvider configDataProvider ) {
-        Properties connectionProperties = configDataProvider.getDatabaseProperties();
-        GraphReader graphReader = new GraphReader();
+    public SaraGraphLoader buildSaraGraphLoader( ConfigDataProvider configDataProvider, GraphReader graphReader ) {
         SaraPreprocessor saraPreprocessor = buildSaraPreprocessor( configDataProvider );
-        return new SaraGraphLoader( connectionProperties, graphReader, saraPreprocessor );
+        return new SaraGraphLoader( graphReader, saraPreprocessor );
+    }
+
+    public GraphReader buildGraphReader(ConfigDataProvider configDataProvider){
+        Properties connectionProperties = configDataProvider.getDatabaseProperties();
+        GraphReader graphReader = new GraphReader( connectionProperties );
+        return graphReader;
     }
 
     private SaraPreprocessor buildSaraPreprocessor( ConfigDataProvider configDataProvider ) {

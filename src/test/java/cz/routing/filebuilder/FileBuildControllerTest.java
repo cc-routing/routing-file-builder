@@ -4,6 +4,7 @@ import cz.certicon.routing.algorithm.sara.preprocessing.overlay.OverlayBuilder;
 import cz.certicon.routing.model.graph.SaraGraph;
 import cz.routing.filebuilder.filewrite.OverlayGraphSaver;
 import cz.routing.filebuilder.graphload.SaraGraphLoader;
+import cz.routing.filebuilder.graphload.data.GraphReader;
 import cz.routing.filebuilder.preprocessing.OverlayPreprocessor;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,8 +31,9 @@ public class FileBuildControllerTest {
         OverlayPreprocessor overlayPreprocessor = mock( OverlayPreprocessor.class );
         when( overlayPreprocessor.buildOverlay( saraGraph ) ).thenReturn( overlayGraph );
         OverlayGraphSaver saver = mock( OverlayGraphSaver.class );
-        controller.run( loader, overlayPreprocessor, saver );
-        verify( saver, times( 1 ) ).saveOverlay( overlayGraph );
+        GraphReader graphReader = mock(GraphReader.class);
+        controller.run( graphReader, loader, overlayPreprocessor, saver );
+        verify( saver, times( 1 ) ).saveOverlay( overlayGraph, graphReader );
     }
 
 }

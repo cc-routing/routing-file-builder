@@ -18,10 +18,6 @@ import java.util.Properties;
  */
 @AllArgsConstructor
 public class SaraGraphLoader {
-    @Getter
-    @Setter
-    @NonNull
-    private Properties properties;
     @Setter
     @NonNull
     private GraphReader graphReader;
@@ -30,14 +26,11 @@ public class SaraGraphLoader {
     private SaraPreprocessor saraPreprocessor;
 
     public SaraGraph loadSara() throws IOException {
-        assert properties.containsKey( "driver" );
-        assert properties.containsKey( "url" );
-        assert properties.containsKey( "spatialite_path" );
         SaraGraph saraGraph;
-        if ( graphReader.isPreprocessed( properties ) ) {
-            saraGraph = graphReader.readSaraGraph( properties );
+        if ( graphReader.isPreprocessed() ) {
+            saraGraph = graphReader.readSaraGraph();
         } else {
-            Graph graph = graphReader.readGraph( properties );
+            Graph graph = graphReader.readGraph();
             saraGraph = saraPreprocessor.preprocess( graph );
         }
         return saraGraph;
