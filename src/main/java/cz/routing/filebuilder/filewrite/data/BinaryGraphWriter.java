@@ -3,9 +3,12 @@ package cz.routing.filebuilder.filewrite.data;
 import cz.certicon.routing.algorithm.sara.preprocessing.overlay.OverlayBuilder;
 import cz.certicon.routing.data.basic.DataDestination;
 import cz.routing.filebuilder.graphload.data.GraphReader;
+import cz.routing.filebuilder.model.TurnTableData;
 
 import java.io.*;
 import java.nio.*;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -23,7 +26,7 @@ public class BinaryGraphWriter {
         this.buffer = ByteBuffer.wrap( new byte[1 << 28] );
     }
 
-    public void writeOverlayGraph( OverlayBuilder overlayBuilder ) {
+    public void writeOverlayGraph( OverlayBuilder overlayBuilder ) throws IOException {
         // write tt index
         int position = 4;
         int layerLen = writeLayers( position, overlayBuilder );
@@ -32,8 +35,10 @@ public class BinaryGraphWriter {
         int ttLen = writeTurnTables( position, overlayBuilder );
     }
 
-    private int writeTurnTables( int position, OverlayBuilder overlayBuilder ) {
+    private int writeTurnTables( int position, OverlayBuilder overlayBuilder ) throws IOException {
+        Map<Integer, TurnTableData> turnTables = graphReader.readTurnTables();
         // write count 2byte
+
         buffer.putShort( position,
                 (short) StreamSupport.stream( overlayBuilder.getSaraGraph().getNodes().spliterator(), false )
                         .map( node -> node.getTurnTable() )

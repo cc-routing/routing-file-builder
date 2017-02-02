@@ -3,12 +3,17 @@ package cz.routing.filebuilder.graphload.data;
 import cz.certicon.routing.model.graph.Graph;
 import cz.certicon.routing.model.graph.SaraGraph;
 import cz.routing.filebuilder.data.DataTestUtils;
+import cz.routing.filebuilder.model.TurnTableData;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -62,5 +67,20 @@ public class GraphReaderTest {
         GraphReader graphReader = new GraphReader( saraProperties );
         boolean isPreprocessed = graphReader.isPreprocessed();
         assertThat( isPreprocessed, equalTo( true ) );
+    }
+
+    @Test
+    public void readTurnTablesReturnsCorrectResults() throws Exception {
+        GraphReader graphReader = new GraphReader( properties );
+        Map<Integer, TurnTableData> result = graphReader.readTurnTables();
+        Map<Integer, TurnTableData> expected = new HashMap<Integer, TurnTableData>() {{
+            put( 1, new TurnTableData( 1, new double[][]{ { Double.MAX_VALUE, 0, 0 }, { 0, Double.MAX_VALUE, 0 }, { 0, 0, Double.MAX_VALUE } } ) );
+            put( 2, new TurnTableData( 2, new double[][]{ { Double.MAX_VALUE } } ) );
+            put( 3, new TurnTableData( 3, new double[][]{ { Double.MAX_VALUE, 0, 0, 0 }, { 0, Double.MAX_VALUE, 0, 0 }, { 0, 0, Double.MAX_VALUE, 0 }, { 0, 0, 0, Double.MAX_VALUE } } ) );
+            put( 4, new TurnTableData( 4, new double[][]{ { Double.MAX_VALUE, 0 }, { 0, Double.MAX_VALUE } } ) );
+            put( 5, new TurnTableData( 5, new double[][]{ { Double.MAX_VALUE, 0 }, { Double.MAX_VALUE, Double.MAX_VALUE } } ) );
+            put( 6, new TurnTableData( 6, new double[][]{ { Double.MAX_VALUE, Double.MAX_VALUE }, { 0, Double.MAX_VALUE } } ) );
+        }};
+        assertThat( result, equalTo( expected ) );
     }
 }
