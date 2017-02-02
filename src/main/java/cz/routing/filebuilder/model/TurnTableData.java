@@ -7,6 +7,6 @@ import lombok.Value;
  */
 @Value
 public class TurnTableData {
-    long turnTableId;
+    int turnTableId;
     double[][] matrix;
 }

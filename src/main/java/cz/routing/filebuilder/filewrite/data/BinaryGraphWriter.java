@@ -4,13 +4,18 @@ import cz.certicon.routing.algorithm.sara.preprocessing.overlay.OverLayer;
 import cz.certicon.routing.algorithm.sara.preprocessing.overlay.OverlayBuilder;
 import cz.certicon.routing.algorithm.sara.preprocessing.overlay.OverlayCell;
 import cz.certicon.routing.data.basic.DataDestination;
+import cz.certicon.routing.model.graph.SaraEdge;
+import cz.certicon.routing.model.graph.SaraNode;
 import cz.routing.filebuilder.graphload.data.GraphReader;
 import cz.routing.filebuilder.model.NodeData;
 import cz.routing.filebuilder.model.TurnTableData;
 import cz.routing.filebuilder.model.utils.Buffer;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.StreamSupport;
 
 /**
@@ -35,6 +40,15 @@ public class BinaryGraphWriter {
         position = writeTurnTables( position, overlayBuilder );
     }
 
+    /*
+     * Int turnTableCount;
+     * TurnTable[int2] turnTables;
+     *
+     * TurnTable {
+     *     Short size;
+     *     Matrix ???;
+     * }
+     */
     private int writeTurnTables( int position, OverlayBuilder overlayBuilder ) throws IOException {
         Map<Integer, TurnTableData> turnTables = graphReader.readTurnTables();
         // write count 2byte
@@ -57,6 +71,13 @@ public class BinaryGraphWriter {
         return position;
     }
 
+    /*
+     * Byte layersCount;
+     * Int[byte] layerMap;
+     * ZeroLayer zeroLayer;
+     * OverLayer[int1] overLayers;
+     *
+     */
     private int writeLayers( int position, OverlayBuilder overlayBuilder ) throws IOException {
         int layerCount = (int) StreamSupport.stream( overlayBuilder.getLayers().spliterator(), false ).count();
         position = buffer.putByte( position, (byte) layerCount );
@@ -71,6 +92,11 @@ public class BinaryGraphWriter {
         return position;
     }
 
+    /*
+     * Int zeroCellCount;
+     * Int[int3] cellMap;
+     * ZeroCell[int3] zeroCells;
+     */
     private int writeZeroLayer( int position, OverlayBuilder overlayBuilder, OverLayer overLayer ) throws IOException {
         int cellCount = overLayer.getCells().size();
         position = buffer.putInt( position, cellCount );
@@ -83,20 +109,69 @@ public class BinaryGraphWriter {
         return position;
     }
 
+    /*
+     * Int byteCount;
+     * Short nodeCount;
+     * Int[] nodeMap;
+     * Node[int2] nodes;
+     * Int edgeCount;
+     * Int[] edgeMap;
+     * Edge[int4] edges;
+     */
     private int writeZeroCell( int position, OverlayBuilder overlayBuilder, OverlayCell cell ) throws IOException {
         // TODO
         // space for byte count
         int startPosition = position;
         position = buffer.moveByN( position, 1, Buffer.Type.INT );
         // nodes
+        Map<Integer, Integer> nodeMap = new HashMap<>();
         Map<Integer, NodeData> nodeDataMap = graphReader.readNodes( cell.getId() );
+        Set<Integer> edgeSet = new HashSet<>();
         position = buffer.putShort( position, (short) nodeDataMap.size() );
+        int nodeMapPosition = position;
+        position = buffer.moveByN( position, nodeDataMap.size(), Buffer.Type.INT );
         for ( NodeData nodeData : nodeDataMap.values() ) {
-
+            SaraNode node = overlayBuilder.getSaraGraph().getNodeById( nodeData.getNodeId() );
+            nodeMap.put( nodeData.getNodeId(), position );
+            nodeMapPosition = buffer.putInt( nodeMapPosition, position );
+            /*
+             * Int turnTable;
+             * Byte inEdgesCount;
+             * Int[int1] inEdges;
+             * Byte outEdgesCount;
+             * Int[int1] outEdges;
+             */
+            position = buffer.putInt( position, nodeData.getTurnTableId() );
+            int incomingEdgesCount = (int) StreamSupport.stream( node.getIncomingEdges().spliterator(), false ).count();
+            position = buffer.putByte( position, (byte) incomingEdgesCount );
+            position = buffer.moveByN( position, incomingEdgesCount, Buffer.Type.INT );
+            int outgoingEdgesCount = (int) StreamSupport.stream( node.getOutgoingEdges().spliterator(), false ).count();
+            position = buffer.putByte( position, (byte) outgoingEdgesCount );
+            position = buffer.moveByN( position, outgoingEdgesCount, Buffer.Type.INT );
+            for ( SaraEdge edge : node.getEdges() ) {
+                edgeSet.add( (int) edge.getId() );
+            }
         }
-        int edgeCount = 0;
-        position = buffer.putInt( position, edgeCount );
-        // write edges TODO
+        // edges TODO
+        Map<Integer, Integer> edgeMap = new HashMap<>();
+        position = buffer.putInt( position, edgeSet.size() );
+        int edgeMapPositiion = position;
+        position = buffer.moveByN( position, edgeSet.size(), Buffer.Type.INT );
+        for ( Integer edgeId : edgeSet ) {
+            SaraEdge edge = overlayBuilder.getSaraGraph().getEdgeById( edgeId );
+            edgeMap.put( edgeId, position );
+            edgeMapPositiion = buffer.putInt( edgeMapPositiion, position );
+            /*
+             * Link3 node;
+             * Byte turnIndexIn;
+             * Byte turnIndexOut;
+             * Byte bordersCount;
+             * Link2[maxLevel] borders;
+             */
+            // TODO
+        }
+        // update nodes - in/out edges with correct positions
+        // TODO
         buffer.putInt( startPosition, position - startPosition );
         return position;
     }
